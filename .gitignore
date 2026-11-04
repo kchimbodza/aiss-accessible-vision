@@ -1,4 +1,18 @@
+# secrets
+.env
 credentials.txt
-__pycache__/
+
+# recordings
 footage/
 intrusions/
+*.mp4
+*.avi
+
+# python
+__pycache__/
+*.py[cod]
+*.egg-info/
+.venv/
+.pytest_cache/
+build/
+dist/
