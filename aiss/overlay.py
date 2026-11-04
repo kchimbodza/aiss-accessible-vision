@@ -39,13 +39,14 @@ def draw_intrusion(
     active: bool,
     patience_left: float,
     now: Optional[datetime] = None,
+    label: str = "Activity Detected",
 ) -> None:
     now = now or datetime.now()
     h = img.shape[0]
     if bbox:
         x, y, w, bh = bbox
         cv2.rectangle(img, (x, y), (x + w, y + bh), CYAN, 2)
-        cv2.putText(img, "Activity Detected", (x, max(12, y - 10)),
+        cv2.putText(img, label, (x, max(12, y - 10)),
                     cv2.FONT_HERSHEY_SIMPLEX, 0.5, CYAN, 1, cv2.LINE_AA)
     draw_banner(img)
     _text(img, f"Room Activity: {active}", (150, 20), CYAN)

@@ -71,7 +71,7 @@ def run_live(camera: str, source: Source, out_dir: Path, fps=20.0, frame_size=(6
 
 def run_intrusion(camera: str, source: Source, out_dir: Path, notifier: Optional[Notifier] = None,
                   fps=20.0, frame_size=(640, 480), display=True,
-                  detector: Optional[MotionDetector] = None,
+                  detector=None,
                   monitor: Optional[IntrusionMonitor] = None) -> int:
     """Watch a camera; record a clip and send an alert for every intrusion.
 
@@ -100,13 +100,15 @@ def run_intrusion(camera: str, source: Source, out_dir: Path, notifier: Optional
                 writer.release()
                 writer, events = None, events + 1
                 ended_at = datetime.now()
+                what = "person detected" if getattr(detector, "kind", "") == "person" else "activity"
                 notifier.send(
-                    f"AISS alert: activity on {camera} from "
+                    f"AISS alert: {what} on {camera} from "
                     f"{started_at:%a %d %b %Y %H:%M:%S} to {ended_at:%H:%M:%S} "
                     f"({(ended_at - started_at).seconds}s recorded)."
                 )
 
-            overlay.draw_intrusion(frame, bbox, monitor.active, monitor.patience_left)
+            overlay.draw_intrusion(frame, bbox, monitor.active, monitor.patience_left,
+                                   label=getattr(detector, "label", "Activity Detected"))
             if writer is not None:
                 writer.write(frame)
             if not _show(f"AISS Intrusion Detection - {camera} (Esc to stop)", frame, display):

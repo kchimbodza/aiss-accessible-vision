@@ -44,6 +44,8 @@ class Config:
     intrusions_dir: Path = Path("intrusions")
     frame_size: tuple = (640, 480)
     fps: float = 20.0
+    detector: str = "hybrid"          # motion | hybrid | person
+    person_confidence: float = 0.45
     twilio: Optional[TwilioConfig] = None
 
     @classmethod
@@ -61,4 +63,6 @@ class Config:
             frame_size=(w, h),
             fps=float(os.getenv("AISS_FPS", "20")),
             twilio=TwilioConfig.from_env(),
+            detector=os.getenv("AISS_DETECTOR", "hybrid").strip().lower(),
+            person_confidence=float(os.getenv("AISS_PERSON_CONFIDENCE", "0.45")),
         )

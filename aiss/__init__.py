@@ -5,4 +5,4 @@ smartphones streaming as IP cameras, with automatic clip recording and
 SMS alerts.
 """
 
-__version__ = "2.0.0"
+__version__ = "2.1.0"

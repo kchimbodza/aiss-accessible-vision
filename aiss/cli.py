@@ -10,6 +10,7 @@ from aiss import __version__
 from aiss.config import Config, parse_source
 from aiss.detector import IntrusionMonitor, MotionDetector
 from aiss.notifier import Notifier
+from aiss.person import build_detector
 
 
 def build_parser() -> argparse.ArgumentParser:
@@ -28,6 +29,9 @@ def build_parser() -> argparse.ArgumentParser:
         s.add_argument("--no-display", action="store_true", help="run headless (no preview window)")
         if name == "detect":
             s.add_argument("--min-area", type=float, default=1100, help="min contour area in px")
+            s.add_argument("--detector", choices=["motion", "hybrid", "person"],
+                           help="motion only, motion + neural-net person check (default), or person check on every few frames")
+            s.add_argument("--person-confidence", type=float, help="min person confidence 0-1 (default 0.45)")
             s.add_argument("--confirm-frames", type=int, default=15,
                            help="consecutive detections needed to start an event")
             s.add_argument("--patience", type=float, default=7.0,
@@ -56,7 +60,8 @@ def main(argv=None) -> int:
         n = run_intrusion(
             args.camera, source, args.out or cfg.intrusions_dir, Notifier(cfg.twilio),
             cfg.fps, cfg.frame_size, display=not args.no_display,
-            detector=MotionDetector(min_area=args.min_area),
+            detector=build_detector(args.detector or cfg.detector, MotionDetector(min_area=args.min_area),
+                                    args.person_confidence or cfg.person_confidence),
             monitor=IntrusionMonitor(detection_thresh=args.confirm_frames, patience=args.patience),
         )
         logging.info("%d intrusion event(s) recorded", n)

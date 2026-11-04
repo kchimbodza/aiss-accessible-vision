@@ -18,6 +18,8 @@ from PIL import Image, ImageTk
 
 from aiss.config import Config
 from aiss.notifier import Notifier
+from aiss.detector import MotionDetector
+from aiss.person import build_detector
 from aiss.pipeline import run_intrusion, run_live
 
 ASSETS = Path(__file__).parent / "assets"
@@ -38,8 +40,9 @@ def _live(cfg: Config, cam: str) -> None:
 
 
 def _intrusion(cfg: Config, cam: str) -> None:
+    detector = build_detector(cfg.detector, MotionDetector(), cfg.person_confidence)
     run_intrusion(cam, cfg.cameras[cam], cfg.intrusions_dir, Notifier(cfg.twilio),
-                  cfg.fps, cfg.frame_size)
+                  cfg.fps, cfg.frame_size, detector=detector)
 
 
 class ControlPanel:

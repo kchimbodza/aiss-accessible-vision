@@ -15,4 +15,9 @@ jobs:
           python-version: ${{ matrix.python-version }}
       - run: pip install opencv-python-headless numpy Pillow twilio python-dotenv pytest
       - run: pip install --no-deps -e .
+      - name: Cache person-detection model
+        uses: actions/cache@v4
+        with:
+          path: ~/.cache/aiss
+          key: aiss-model-nanodet-2022nov
       - run: pytest -v
