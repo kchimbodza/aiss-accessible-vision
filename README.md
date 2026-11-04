@@ -2,9 +2,9 @@
 
 # 🎥 AISS: AI Surveillance System
 
-**Real-time intrusion detection that turns ordinary webcams and smartphones into a smart CCTV network.**
+**Accessible, low-cost computer vision security: real-time intrusion detection that turns ordinary webcams and smartphones into a smart CCTV network.**
 
-[![CI](https://github.com/kchimbodza/aiss-ai-surveillance/actions/workflows/ci.yml/badge.svg)](https://github.com/kchimbodza/aiss-ai-surveillance/actions/workflows/ci.yml)
+[![CI](https://github.com/kchimbodza/aiss-accessible-vision/actions/workflows/ci.yml/badge.svg)](https://github.com/kchimbodza/aiss-accessible-vision/actions/workflows/ci.yml)
 ![Python](https://img.shields.io/badge/python-3.8%2B-3776AB?logo=python&logoColor=white)
 ![OpenCV](https://img.shields.io/badge/OpenCV-computer%20vision-5C3EE8?logo=opencv&logoColor=white)
 ![Twilio](https://img.shields.io/badge/Twilio-SMS%20alerts-F22F46?logo=twilio&logoColor=white)
@@ -30,6 +30,23 @@ phones streaming as IP cameras). It does the following:
 - **detects** intruders in real time with background subtraction and contour analysis
 - **saves an evidence clip** of each intrusion, using searchable file names
 - **sends an SMS alert** to the owner through the Twilio API when an intrusion ends
+
+### ♿ Accessible by design
+
+Commercial AI surveillance tends to cost too much for small businesses and assume a lot of
+technical knowledge. AISS was built to remove those barriers:
+
+- **No new hardware.** It runs on a laptop the client already owned, plus old Android phones
+  streaming as IP cameras.
+- **Alerts reach any phone.** Notifications are plain SMS, so they work on a basic feature phone
+  with no app, smartphone or mobile data needed. That matters in places where data is
+  expensive or patchy.
+- **No one has to watch screens.** The system does the watching and only raises an alert when
+  something happens. It can run unattended.
+- **Simple to operate.** One control panel with large, high-contrast buttons. Clips are named by
+  camera and time, so non-technical owners can find evidence without scrubbing through footage.
+- **Low-bandwidth friendly.** Streams are processed at modest resolutions over local Wi-Fi, and
+  nothing is sent to the cloud.
 
 ### Results: 100 controlled trials
 
@@ -95,8 +112,8 @@ flowchart LR
 ## Quick start
 
 ```bash
-git clone https://github.com/kchimbodza/aiss-ai-surveillance.git
-cd aiss-ai-surveillance
+git clone https://github.com/kchimbodza/aiss-accessible-vision.git
+cd aiss-accessible-vision
 python -m venv .venv && source .venv/bin/activate
 pip install -e .
 
