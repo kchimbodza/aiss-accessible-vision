@@ -5,7 +5,7 @@
 **Accessible, low-cost computer vision security: real-time intrusion detection that turns ordinary webcams and smartphones into a smart CCTV network.**
 
 [![CI](https://github.com/kchimbodza/aiss-accessible-vision/actions/workflows/ci.yml/badge.svg)](https://github.com/kchimbodza/aiss-accessible-vision/actions/workflows/ci.yml)
-![Python](https://img.shields.io/badge/python-3.8%2B-3776AB?logo=python&logoColor=white)
+![Python](https://img.shields.io/badge/python-3.10%2B-3776AB?logo=python&logoColor=white)
 ![OpenCV](https://img.shields.io/badge/OpenCV-computer%20vision-5C3EE8?logo=opencv&logoColor=white)
 ![Twilio](https://img.shields.io/badge/Twilio-SMS%20alerts-F22F46?logo=twilio&logoColor=white)
 ![License](https://img.shields.io/badge/license-MIT-green)

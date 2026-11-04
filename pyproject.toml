@@ -9,7 +9,7 @@ description = "AI Surveillance System - real-time intrusion detection with OpenC
 readme = "README.md"
 license = { text = "MIT" }
 authors = [{ name = "Kudzayi Chimbodza" }]
-requires-python = ">=3.8"
+requires-python = ">=3.10"
 dependencies = ["opencv-python>=4.5", "numpy>=1.21", "Pillow>=9.1", "twilio>=7.0", "python-dotenv>=0.19"]
 keywords = ["computer-vision", "opencv", "surveillance", "intrusion-detection", "motion-detection"]
 
