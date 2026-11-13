@@ -1,0 +1,94 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 960 310" width="960" height="310" role="img" aria-labelledby="t d">
+  <title id="t">How AISS detects an intruder</title>
+  <desc id="d">A Tkinter control panel starts one process per camera stream, either live recording or intrusion detection. For intrusion detection, every frame from a webcam or phone IP camera goes through MOG2 background subtraction, shadow threshold and dilation, and a largest-contour-above-minimum-area test. Only when there is motion, a pretrained NanoDet person detector checks for a person, at most every third frame, falling back to motion-only if the model cannot load. An event starts after 15 consecutive positive frames and an MP4 clip is recorded. When the scene has been clear for 7 seconds the event ends and an SMS alert is sent through Twilio on a background thread, or written to the console if Twilio is not set up.</desc>
+  <style>
+    :root { --ink:#1f2937; --sub:#57606a; --line:#d0d7de; --card:#ffffff; --on:#d9480f; --tint:#fff4e6; --group:#f6f8fa; }
+    @media (prefers-color-scheme: dark) {
+      :root { --ink:#e6edf3; --sub:#9198a1; --line:#3d444d; --card:#161b22; --on:#ff8a4c; --tint:#2b1a10; --group:#0d1117; }
+    }
+    text { font-family: Inter, "Segoe UI", system-ui, -apple-system, Helvetica, Arial, sans-serif; }
+    .lane  { font-size:12px; font-weight:700; fill:var(--sub); letter-spacing:.06em; }
+    .title { font-size:13.5px; font-weight:700; fill:var(--ink); text-anchor:middle; }
+    .sub   { font-size:10.5px; fill:var(--sub); text-anchor:middle; }
+    .pill-t{ font-size:11.5px; font-weight:600; fill:var(--ink); text-anchor:middle; }
+    .node  { fill:var(--card); stroke:var(--line); stroke-width:1.5; }
+    .hl    { fill:var(--tint); stroke:var(--on); stroke-width:1.5; }
+    .group { fill:var(--group); stroke:var(--line); stroke-width:1.5; stroke-dasharray:5 4; }
+    .wire  { stroke:var(--line); stroke-width:1.5; fill:none; }
+    .link  { stroke:var(--on); stroke-width:1.5; fill:none; stroke-dasharray:4 6; animation: dash 1.2s linear infinite; }
+    @keyframes dash { to { stroke-dashoffset:-20; } }
+    .head  { fill:var(--line); }
+    .dot   { fill:var(--on); }
+    .t1 { animation: g1 6s infinite ease-in-out; }
+    .t2 { animation: g2 6s infinite ease-in-out; }
+    @keyframes g1 {
+      0%,6%   { transform:translateX(286px); } 18%,24% { transform:translateX(433px); }
+      36%,42% { transform:translateX(580px); } 54%,60% { transform:translateX(727px); }
+      72%,100%{ transform:translateX(874px); }
+    }
+    @keyframes g2 {
+      0%,8%   { transform:translateX(304px); } 25%,33% { transform:translateX(488px); }
+      50%,58% { transform:translateX(672px); } 75%,100%{ transform:translateX(856px); }
+    }
+    @media (prefers-reduced-motion: reduce) { .t1, .t2, .link { animation:none; } }
+  </style>
+  <defs>
+    <marker id="a" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto"><path class="head" d="M0 0 L10 5 L0 10z"/></marker>
+  </defs>
+
+  <!-- left: control panel + processes -->
+  <rect class="node" x="20" y="40" width="170" height="70" rx="10"/>
+  <text class="title" x="105" y="68">Control panel</text>
+  <text class="sub" x="105" y="86">Tkinter, large buttons</text>
+  <path class="wire" d="M105 110 V138" marker-end="url(#a)"/>
+  <text class="sub" x="112" y="128" style="text-anchor:start">starts</text>
+  <rect class="group" x="20" y="140" width="170" height="128" rx="12"/>
+  <text class="title" x="105" y="162">One process</text>
+  <text class="title" x="105" y="178">per camera stream</text>
+  <rect class="node" x="34" y="190" width="142" height="30" rx="8"/><text class="pill-t" x="105" y="209">Live recording</text>
+  <rect class="hl"   x="34" y="228" width="142" height="30" rx="8"/><text class="pill-t" x="105" y="247">Intrusion detection</text>
+  <path class="wire" d="M176 243 H204 V75 H218" marker-end="url(#a)"/>
+
+  <!-- lane 1 -->
+  <text class="lane" x="220" y="26">1 · EVERY FRAME  (detector.py, person.py)</text>
+  <g>
+    <rect class="node" x="220" y="40" width="132" height="70" rx="10"/>
+    <text class="title" x="286" y="68">Camera frame</text><text class="sub" x="286" y="86">webcam or phone</text><text class="sub" x="286" y="100">IP camera, 640x480</text>
+    <rect class="node" x="367" y="40" width="132" height="70" rx="10"/>
+    <text class="title" x="433" y="68">MOG2</text><text class="sub" x="433" y="86">background</text><text class="sub" x="433" y="100">subtraction</text>
+    <rect class="node" x="514" y="40" width="132" height="70" rx="10"/>
+    <text class="title" x="580" y="68">Clean mask</text><text class="sub" x="580" y="86">shadow threshold</text><text class="sub" x="580" y="100">+ dilation</text>
+    <rect class="node" x="661" y="40" width="132" height="70" rx="10"/>
+    <text class="title" x="727" y="68">Motion?</text><text class="sub" x="727" y="86">largest contour</text><text class="sub" x="727" y="100">&gt; min area</text>
+    <rect class="hl"   x="808" y="40" width="132" height="70" rx="10"/>
+    <text class="title" x="874" y="68">Person?</text><text class="sub" x="874" y="86">NanoDet, OpenCV DNN</text><text class="sub" x="874" y="100">every 3rd frame</text>
+    <path class="wire" d="M352 75 H365" marker-end="url(#a)"/>
+    <path class="wire" d="M499 75 H512" marker-end="url(#a)"/>
+    <path class="wire" d="M646 75 H659" marker-end="url(#a)"/>
+    <path class="wire" d="M793 75 H806" marker-end="url(#a)"/>
+    <circle class="dot t1" cx="0" cy="40" r="5"/>
+  </g>
+  <text class="sub" x="874" y="126">no model → motion only</text>
+
+  <!-- link -->
+  <path class="link" d="M874 132 V146 H304 V172"/>
+  <text class="sub" x="590" y="140">person found</text>
+
+  <!-- lane 2 -->
+  <text class="lane" x="318" y="166">2 · EACH EVENT  (IntrusionMonitor, pipeline.py, notifier.py)</text>
+  <g>
+    <rect class="node" x="220" y="174" width="168" height="70" rx="10"/>
+    <text class="title" x="304" y="202">Debounce</text><text class="sub" x="304" y="220">15 positive frames</text><text class="sub" x="304" y="234">in a row → event starts</text>
+    <rect class="node" x="404" y="174" width="168" height="70" rx="10"/>
+    <text class="title" x="488" y="202">Record clip</text><text class="sub" x="488" y="220">MP4 with HUD, named</text><text class="sub" x="488" y="234">IDS_Cam2_Mon-09-37-02…</text>
+    <rect class="node" x="588" y="174" width="168" height="70" rx="10"/>
+    <text class="title" x="672" y="202">Patience timer</text><text class="sub" x="672" y="220">clear for 7 s</text><text class="sub" x="672" y="234">→ event ends</text>
+    <rect class="hl"   x="772" y="174" width="168" height="70" rx="10"/>
+    <text class="title" x="856" y="202">SMS alert</text><text class="sub" x="856" y="220">Twilio, background thread</text><text class="sub" x="856" y="234">console if not set up</text>
+    <path class="wire" d="M388 209 H402" marker-end="url(#a)"/>
+    <path class="wire" d="M572 209 H586" marker-end="url(#a)"/>
+    <path class="wire" d="M756 209 H770" marker-end="url(#a)"/>
+    <circle class="dot t2" cx="0" cy="174" r="5"/>
+  </g>
+  <text class="sub" x="480" y="292">Live recording saves every frame with a timestamp (LS_Cam1_…mp4). Default mode shown; --detector motion or person changes the frame step.</text>
+</svg>

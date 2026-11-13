@@ -86,19 +86,9 @@ failure seen in the field.
 
 ---
 
-## How it works
+## Architecture
 
-```mermaid
-flowchart LR
-    A[Webcam / IP camera] --> B[MOG2 background<br>subtraction]
-    B --> C[Shadow threshold<br>+ dilation]
-    C --> D[Largest contour<br>&gt; min area?]
-    D -->|motion| P[Pretrained person<br>detector, NanoDet]
-    P -->|person found| E{Debounce:<br>15 consecutive hits}
-    E -->|event starts| F[Record MP4 clip]
-    F --> G{Patience timer:<br>gone for 7 s?}
-    G -->|event ends| H[SMS alert via Twilio]
-```
+<p align="center"><img src="docs/architecture.svg" width="100%" alt="A Tkinter control panel starts one process per camera stream, for live recording or intrusion detection. Every frame from a webcam or phone IP camera goes through MOG2 background subtraction, shadow threshold and dilation, and a largest-contour-above-minimum-area test. Only when there is motion, a pretrained NanoDet person detector checks for a person, at most every third frame, falling back to motion-only if the model can't load. After 15 positive frames in a row an event starts and an MP4 clip is recorded; when the scene has been clear for 7 seconds the event ends and an SMS alert is sent through Twilio on a background thread, or printed to the console."></p>
 
 1. **Background modelling**: OpenCV's Gaussian Mixture Model (MOG2, Zivkovic 2004/2006) learns
    the static scene, so anything that moves shows up as foreground.
@@ -117,6 +107,17 @@ flowchart LR
    messages.
 6. **Concurrency**: each camera runs in its own process, so four streams can be recorded and
    analysed at the same time on one laptop.
+
+**Why this architecture**
+
+| Choice | Why |
+|---|---|
+| Motion first, neural network second | Background subtraction is cheap enough to run on every frame on a laptop CPU. The network runs only while something moves, at most every 3rd frame. |
+| NanoDet through OpenCV DNN | A 3.8 MB pretrained model that needs no GPU or PyTorch, so it runs on the laptop the client already had. |
+| Fall back to motion-only | If the model can't load, the camera is still watched instead of going blind. |
+| 15-frame debounce + 7 s patience timer | Stops alerts from flickering and one intrusion from sending dozens of SMS messages. |
+| One process per camera | Four streams can be recorded and analysed at the same time on one laptop. |
+| SMS through Twilio | Reaches a basic feature phone with no app or mobile data. |
 
 <details>
 <summary><b>System architecture and flowchart</b> (from the dissertation)</summary>
@@ -210,6 +211,25 @@ The tests generate synthetic frames and videos, so the detector, the state machi
 record-and-alert pipeline can all be checked in CI without camera hardware. The person-detector
 tests run the real model on a frame from OpenCV's sample video. They check that pedestrians are
 found, that an empty scene stays empty, and that a bumped camera doesn't raise an alarm.
+
+**Current status:** 19 tests, all passing.
+
+| Where | Python | Result |
+|---|---|---|
+| GitHub Actions, run [41905094956](https://github.com/kchimbodza/aiss-accessible-vision/actions/runs/41905094956) (4 Nov 2026) | 3.10 and 3.13 | 19 passed in each job (~2.8 s) |
+| Local run, Arch Linux (13 Nov 2026) | 3.14.8 | 19 passed in 2.1 s |
+
+## What worked and what didn't
+
+| | What | Detail |
+|---|---|---|
+| ✅ | Field trials (2022) | 100 controlled trials: 97% accuracy, 94.2% precision, 100% recall. No intrusion was missed. |
+| ❌ | Motion-only false alarms (2022) | All 3 false positives came from a camera being physically bumped. |
+| ✅ | Person check (v2.1) | In the synthetic replay, a bumped camera and lights switching on no longer raise an alarm (checked in CI by `test_hybrid_suppresses_bump_and_lighting_false_alarms`). |
+| ⚠️ | Not re-tested in the field | The v2.1 result is synthetic. The 100 field trials have not been repeated with the person check yet. |
+| ⚠️ | Someone standing still | In the default mode the network only runs after motion; `--detector person` is needed to catch a person who doesn't move. |
+| ✅ | v2.0 refactor | Four copy-pasted camera loops became one tested pipeline; secrets moved out of the code into `.env`. |
+| ❌ | CI on Python 3.9 | One CI run failed because Python 3.9 is not available on the current Ubuntu runner. The matrix was moved to 3.10 and 3.13, and every run since has passed. |
 
 ---
 
